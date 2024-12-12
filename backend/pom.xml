@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.ndk</groupId>
-	<artifactId>cordis-backend</artifactId>
+	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cordis-backend</name>
 	<description>Demo project for Spring Boot</description>

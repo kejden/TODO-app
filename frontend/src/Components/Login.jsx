@@ -1,10 +1,11 @@
 import { useState } from "react";
+import PropTypes from 'prop-types';
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import {BASE_API_URL} from "../config/api.js";
+import { BASE_API_URL } from "../config/api.js";
 import axios from "axios";
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => {
     const [user, setUser] = useState({
         email: "",
         password: ""
@@ -21,15 +22,17 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(!validatePassword(user.password)) {
+        if (!validatePassword(user.password)) {
             return;
         }
         try {
             const response = await axios.post(`${BASE_API_URL}/auth/sign-in`, user, {
                 headers: { 'Content-Type': 'application/json' },
-                withCredentials: true })
+                withCredentials: true
+            });
 
             if (response.status === 200) {
+                setIsLoggedIn(true);
                 navigate("/");
                 toast.success("You have logged in successfully.");
             }
@@ -42,11 +45,10 @@ const Login = () => {
         }
     };
 
-    const onChange = (event) =>{
-        const {name, value} = event.target;
-        setUser({...user, [name]: value});
-    }
-
+    const onChange = (event) => {
+        const { name, value } = event.target;
+        setUser({ ...user, [name]: value });
+    };
 
     return (
         <>
@@ -104,6 +106,10 @@ const Login = () => {
             </div>
         </>
     );
+};
+
+Login.propTypes = {
+    setIsLoggedIn: PropTypes.func.isRequired,
 };
 
 export default Login;
