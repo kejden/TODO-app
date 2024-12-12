@@ -16,6 +16,8 @@ public enum BusinessErrorCodes {
     EMAIL_IS_USED(307, "Email is already in used", HttpStatus.BAD_REQUEST),
     NO_SUCH_ID(308, "There is no user with that ID", HttpStatus.BAD_REQUEST),
     BAD_COOKIE(309, "Provided cookie is incorrect", HttpStatus.BAD_REQUEST),
+    CATEGORY_ALREADY_EXISTS(310, "This category already exists", HttpStatus.BAD_REQUEST),
+    NO_SUCH_CATEGORY(311, "This category does not exist", HttpStatus.BAD_REQUEST),
     ;
 
     @Getter

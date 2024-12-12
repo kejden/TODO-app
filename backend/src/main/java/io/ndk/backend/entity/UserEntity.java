@@ -3,8 +3,11 @@ package io.ndk.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,4 +23,7 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CategoryEntity> categories;
 }
