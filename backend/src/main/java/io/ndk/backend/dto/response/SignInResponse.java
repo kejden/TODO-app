@@ -11,8 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SignInResponse {
     private Long id;
-
-    private String userName;
-
     private String email;
 }

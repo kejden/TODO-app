@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -16,6 +17,12 @@ import java.security.Principal;
 public class CategoryController {
 
     private final CategoryService categoryService;
+
+    @GetMapping()
+    public ResponseEntity<List<CategoryDto>> getCategories(Principal principal) {
+        List<CategoryDto> categories = categoryService.getAllCategoriesOfUser(principal.getName());
+        return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> getCategory(@PathVariable Long id) {

@@ -13,6 +13,9 @@ import io.ndk.backend.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -20,6 +23,13 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CategoryMapper categoryMapper;
+
+    @Override
+    public List<CategoryDto> getAllCategoriesOfUser(String email) {
+        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+
+        return categoryRepository.findByUser(user).stream().map(categoryMapper::mapTo).collect(Collectors.toList());
+    }
 
     @Override
     public CategoryDto getCategoryById(Long id) {
