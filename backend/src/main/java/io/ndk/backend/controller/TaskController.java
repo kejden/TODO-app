@@ -23,6 +23,11 @@ public class TaskController {
         return new ResponseEntity<>(taskService.getTaskByUser(principal.getName()), HttpStatus.OK);
     }
 
+    @GetMapping("/category-none")
+    public ResponseEntity<List<TaskDto>> getTasksWithoutCategory(Principal principal) {
+        return new ResponseEntity<>(taskService.getTasksWithoutCategory(principal.getName()), HttpStatus.OK);
+    }
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<TaskDto>> getTasksByCategory(@PathVariable Long categoryId) {
         return new ResponseEntity<>(taskService.getTaskByCategoryId(categoryId), HttpStatus.OK);

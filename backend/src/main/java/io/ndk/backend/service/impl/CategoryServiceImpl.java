@@ -3,8 +3,8 @@ package io.ndk.backend.service.impl;
 import io.ndk.backend.Mappers.impl.CategoryMapper;
 import io.ndk.backend.dto.CategoryDto;
 import io.ndk.backend.dto.request.CategoryRequest;
-import io.ndk.backend.entity.CategoryEntity;
-import io.ndk.backend.entity.UserEntity;
+import io.ndk.backend.entity.Category;
+import io.ndk.backend.entity.User;
 import io.ndk.backend.handler.BusinessErrorCodes;
 import io.ndk.backend.handler.CustomException;
 import io.ndk.backend.repository.CategoryRepository;
@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getAllCategoriesOfUser(String email) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
 
         return categoryRepository.findByUser(user).stream().map(categoryMapper::mapTo).collect(Collectors.toList());
     }
@@ -40,23 +40,23 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto addCategory(CategoryRequest categoryRequest, String userEmail) {
-        UserEntity userEntity = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+        User userEntity = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
         if (categoryRepository.existsByNameAndUser(categoryRequest.getName(), userEntity)) {
             throw new CustomException(BusinessErrorCodes.CATEGORY_ALREADY_EXISTS);
         }
-        CategoryEntity categoryEntity = new CategoryEntity().builder()
+        Category categoryEntity = new Category().builder()
                 .name(categoryRequest.getName())
                 .user(userEntity)
                 .build();
-        CategoryEntity savedCategory = categoryRepository.save(categoryEntity);
+        Category savedCategory = categoryRepository.save(categoryEntity);
         return categoryMapper.mapTo(savedCategory);
     }
 
     @Override
     public CategoryDto updateCategory(Long id, CategoryRequest categoryRequest) {
-        CategoryEntity categoryEntity = categoryRepository.findById(id).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+        Category categoryEntity = categoryRepository.findById(id).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
         categoryEntity.setName(categoryRequest.getName());
-        CategoryEntity savedCategory = categoryRepository.save(categoryEntity);
+        Category savedCategory = categoryRepository.save(categoryEntity);
         return categoryMapper.mapTo(savedCategory);
     }
 

@@ -3,9 +3,9 @@ package io.ndk.backend.service.impl;
 import io.ndk.backend.Mappers.Mapper;
 import io.ndk.backend.dto.TaskDto;
 import io.ndk.backend.dto.request.TaskRequest;
-import io.ndk.backend.entity.CategoryEntity;
-import io.ndk.backend.entity.TaskEntity;
-import io.ndk.backend.entity.UserEntity;
+import io.ndk.backend.entity.Category;
+import io.ndk.backend.entity.Task;
+import io.ndk.backend.entity.User;
 import io.ndk.backend.handler.BusinessErrorCodes;
 import io.ndk.backend.handler.CustomException;
 import io.ndk.backend.repository.CategoryRepository;
@@ -25,46 +25,55 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    private final Mapper<TaskEntity, TaskDto> mapper;
+    private final Mapper<Task, TaskDto> mapper;
 
     @Override
     public List<TaskDto> getTaskByUser(String email) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
         return taskRepository.findByUser(user).stream().map(mapper::mapTo).collect(Collectors.toList());
     }
 
     @Override
+    public List<TaskDto> getTasksWithoutCategory(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+        return taskRepository.findByUser(user).stream().filter(t -> t.getCategory() == null).map(mapper::mapTo).collect(Collectors.toList());
+    }
+
+    @Override
     public List<TaskDto> getTaskByCategoryId(Long categoryId) {
-        CategoryEntity category = categoryRepository.findById(categoryId).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
         return taskRepository.findByCategory(category).stream().map(mapper::mapTo).collect(Collectors.toList());
     }
 
     @Override
     public TaskDto createTask(TaskRequest request) {
-        CategoryEntity categoryEntity = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
-        TaskEntity task = new TaskEntity().builder()
+        Category categoryEntity = null;
+        if(request.getCategoryId() != null) {
+            categoryEntity = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+        }
+        Task task = new Task().builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .category(categoryEntity)
                 .build();
-        TaskEntity savedTask = taskRepository.save(task);
+        Task savedTask = taskRepository.save(task);
         return mapper.mapTo(savedTask);
     }
 
     @Override
     public TaskDto getTaskById(Long id) {
-        TaskEntity task = taskRepository.findById(id).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_TASK));
+        Task task = taskRepository.findById(id).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_TASK));
         return mapper.mapTo(task);
     }
 
     @Override
     public TaskDto updateById(Long id, TaskRequest request) {
-        CategoryEntity categoryEntity = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
-        TaskEntity task = taskRepository.findById(id).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_TASK));
+        Category categoryEntity = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+        Task task = taskRepository.findById(id).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_TASK));
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
         task.setCategory(categoryEntity);
-        TaskEntity saved = taskRepository.save(task);
+        Task saved = taskRepository.save(task);
         return mapper.mapTo(saved);
     }
 

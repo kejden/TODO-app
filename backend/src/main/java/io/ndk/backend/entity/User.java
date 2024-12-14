@@ -8,13 +8,13 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "users")
+//@Table(name = "USERS")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserEntity {
+public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long id;
@@ -26,8 +26,8 @@ public class UserEntity {
     private String password;
 
     @OneToMany(mappedBy = "user")
-    private List<CategoryEntity> categories = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<TaskEntity> tasks = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
 }

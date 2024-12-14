@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "tasks")
+//@Table(name = "TASKS")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskEntity {
+public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,12 +22,12 @@ public class TaskEntity {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity category;
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

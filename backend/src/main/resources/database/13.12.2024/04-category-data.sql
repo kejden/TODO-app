@@ -1,4 +1,4 @@
-INSERT INTO categories (name, user_id) VALUES
+INSERT INTO category (name, user_id) VALUES
                                            ('Category 1', 1),
                                            ('Category 2', 1),
                                            ('Category 3', 1),

@@ -4,7 +4,7 @@ import io.ndk.backend.Mappers.Mapper;
 import io.ndk.backend.dto.request.AccountSignUp;
 import io.ndk.backend.dto.request.SignInRequest;
 import io.ndk.backend.dto.response.SignInResponse;
-import io.ndk.backend.entity.UserEntity;
+import io.ndk.backend.entity.User;
 import io.ndk.backend.handler.BusinessErrorCodes;
 import io.ndk.backend.handler.CustomException;
 import io.ndk.backend.repository.UserRepository;
@@ -27,25 +27,25 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final Mapper<UserEntity, AccountSignUp> mapper;
+    private final Mapper<User, AccountSignUp> mapper;
 
 
     @Override
     public AccountSignUp signUp(AccountSignUp dto) {
         userRepository.findByEmail(dto.getEmail()).ifPresent(user -> {throw new CustomException(BusinessErrorCodes.EMAIL_IS_USED);});
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-        UserEntity user = UserEntity.builder()
+        User user = User.builder()
                 .password(dto.getPassword())
                 .email(dto.getEmail())
                 .build();
-        UserEntity savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
         return mapper.mapTo(savedUser);
 
     }
 
     @Override
     public SignInResponse signIn(SignInRequest dto) {
-        UserEntity user = userRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+        User user = userRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
 //        if(!user.isEnabled())
 //            throw new MessagingException("account is not active");
 //
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logout(String email) {
-        UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
         userRepository.save(user);
     }
 }

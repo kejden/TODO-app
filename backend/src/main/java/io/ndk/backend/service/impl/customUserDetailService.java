@@ -1,10 +1,9 @@
 package io.ndk.backend.service.impl;
 
-import io.ndk.backend.entity.UserEntity;
+import io.ndk.backend.entity.User;
 import io.ndk.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,12 +20,12 @@ public class customUserDetailService implements UserDetailsService {
     private final UserRepository userRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserEntity> user = userRepository.findByEmail(username);
+        Optional<User> user = userRepository.findByEmail(username);
         if(user.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
         List<GrantedAuthority> authorities = new ArrayList<>();
-        return new User(user.get().getEmail(), user.get().getPassword(), authorities);
+        return new org.springframework.security.core.userdetails.User(user.get().getEmail(), user.get().getPassword(), authorities);
     }
 
 }
