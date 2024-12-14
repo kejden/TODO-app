@@ -8,8 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class TaskDto {
-    private int id;
+    private Long id;
     private String title;
     private String description;
     private String status;
+    private Long categoryId;
 }

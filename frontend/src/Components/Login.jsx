@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { BASE_API_URL } from "../config/api.js";
 import axios from "axios";
 
-const Login = ({ setIsLoggedIn }) => {
+const Login = () => {
     const [user, setUser] = useState({
         email: "",
         password: ""
@@ -32,7 +32,7 @@ const Login = ({ setIsLoggedIn }) => {
             });
 
             if (response.status === 200) {
-                setIsLoggedIn(true);
+                localStorage.setItem("user", JSON.stringify(response.data));
                 navigate("/");
                 toast.success("You have logged in successfully.");
             }
@@ -54,7 +54,7 @@ const Login = ({ setIsLoggedIn }) => {
         <>
             <div className="h-screen bg-cover bg-center flex items-center justify-center w-full">
                 <div className="lex items-center justify-center">
-                    <div className="w-full max-w-sm bg-gray-800 text-white p-6 rounded-lg shadow-md">
+                    <div className="w-full max-w-sm bg-gray-900 text-white p-6 rounded-lg shadow-md">
                         <h2 className="text-2xl font-bold text-center mb-4">Welcome back!</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
@@ -107,9 +107,4 @@ const Login = ({ setIsLoggedIn }) => {
         </>
     );
 };
-
-Login.propTypes = {
-    setIsLoggedIn: PropTypes.func.isRequired,
-};
-
 export default Login;

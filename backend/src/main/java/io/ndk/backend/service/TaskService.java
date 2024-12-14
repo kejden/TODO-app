@@ -9,7 +9,7 @@ public interface TaskService {
     List<TaskDto> getTaskByUser(String email);
     List<TaskDto> getTasksWithoutCategory(String email);
     List<TaskDto> getTaskByCategoryId(Long categoryId);
-    TaskDto createTask(TaskRequest request);
+    TaskDto createTask(TaskRequest request, String email);
     TaskDto getTaskById(Long id);
     TaskDto updateById(Long id, TaskRequest task);
     void deleteById(Long id);

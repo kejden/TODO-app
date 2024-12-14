@@ -46,7 +46,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDto createTask(TaskRequest request) {
+    public TaskDto createTask(TaskRequest request, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
         Category categoryEntity = null;
         if(request.getCategoryId() != null) {
             categoryEntity = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
@@ -55,6 +56,8 @@ public class TaskServiceImpl implements TaskService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .category(categoryEntity)
+                .status(request.getStatus())
+                .user(user)
                 .build();
         Task savedTask = taskRepository.save(task);
         return mapper.mapTo(savedTask);
@@ -68,10 +71,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDto updateById(Long id, TaskRequest request) {
-        Category categoryEntity = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+        Category categoryEntity = null;
+        if(request.getCategoryId() != null) {
+            categoryEntity = categoryRepository.findById(request.getCategoryId()).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+        }
         Task task = taskRepository.findById(id).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_TASK));
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
+        task.setStatus(request.getStatus());
         task.setCategory(categoryEntity);
         Task saved = taskRepository.save(task);
         return mapper.mapTo(saved);
