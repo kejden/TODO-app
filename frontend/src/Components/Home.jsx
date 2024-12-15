@@ -166,7 +166,7 @@ const Home = () => {
 
             if (response.status === 204) {
                 toast.success("Task deleted successfully");
-                setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+                setTasksWithoutCategory((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
             }
         } catch (error) {
             toast.error("Error deleting task");
