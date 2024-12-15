@@ -55,7 +55,7 @@ const AddItemModal = ({
         }
 
         try {
-            console.log(newTask);
+            // console.log(newTask);
             const response = await axios.post(
                 `${BASE_API_URL}/api/tasks`,
                 newTask,

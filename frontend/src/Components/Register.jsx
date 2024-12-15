@@ -54,7 +54,7 @@ const Login = ({ setIsLoggedIn }) => {
             <div className="h-screen bg-cover bg-center flex items-center justify-center w-full">
                 <div className="lex items-center justify-center">
                     <div className="w-full max-w-sm bg-gray-800 text-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-2xl font-bold text-center mb-4">Welcome back!</h2>
+                        <h2 className="text-2xl font-bold text-center mb-4">Nice to meet you!</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-400 mb-1">
@@ -90,16 +90,9 @@ const Login = ({ setIsLoggedIn }) => {
                                 type="submit"
                                 className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded transition"
                             >
-                                Log In
+                                Register
                             </button>
                         </form>
-
-                        <p className="text-center text-gray-400 mt-4">
-                            Need an account?{" "}
-                            <a href="/register" className="text-blue-400 hover:underline">
-                                Register
-                            </a>
-                        </p>
                     </div>
                 </div>
             </div>

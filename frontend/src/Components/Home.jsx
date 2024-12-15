@@ -51,7 +51,7 @@ const Home = () => {
     };
 
     const handleEditCategory = (category) => {
-        console.log(category)
+        // console.log(category)
         setCategoryToEdit(category);
         setEditCategoryModalOpen(true);
     };
@@ -180,7 +180,7 @@ const Home = () => {
 
     const handleEditTaskSave = async (updatedTask) => {
         try {
-            console.log(updatedTask);
+            // console.log(updatedTask);
             const response = await axios.put(
                 `${BASE_API_URL}/api/tasks/${updatedTask.id}`,
                 updatedTask,
