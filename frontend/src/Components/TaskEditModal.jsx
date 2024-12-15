@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 const TaskEditModal = ({ task, categories, isOpen, onClose, onSave }) => {
     const STATUS_OPTIONS = ["NEW", "IN_PROGRESS", "COMPLETED"];
@@ -28,7 +29,7 @@ const TaskEditModal = ({ task, categories, isOpen, onClose, onSave }) => {
                             type="text"
                             value={localTask?.title || ""}
                             onChange={(e) =>
-                                setLocalTask({...localTask, title: e.target.value})
+                                setLocalTask({ ...localTask, title: e.target.value })
                             }
                             className="w-full border border-gray-300 rounded-lg p-2"
                             required
@@ -39,7 +40,7 @@ const TaskEditModal = ({ task, categories, isOpen, onClose, onSave }) => {
                         <textarea
                             value={localTask?.description || ""}
                             onChange={(e) =>
-                                setLocalTask({...localTask, description: e.target.value})
+                                setLocalTask({ ...localTask, description: e.target.value })
                             }
                             className="w-full border border-gray-300 rounded-lg p-2"
                             required
@@ -50,7 +51,7 @@ const TaskEditModal = ({ task, categories, isOpen, onClose, onSave }) => {
                         <select
                             value={localTask?.status || "NEW"}
                             onChange={(e) =>
-                                setLocalTask({...localTask, status: e.target.value})
+                                setLocalTask({ ...localTask, status: e.target.value })
                             }
                             className="w-full border border-gray-300 rounded-lg p-2"
                             required
@@ -67,12 +68,12 @@ const TaskEditModal = ({ task, categories, isOpen, onClose, onSave }) => {
                         <select
                             value={localTask?.categoryId || ""}
                             onChange={(e) =>
-                                setLocalTask({...localTask, categoryId: e.target.value})
+                                setLocalTask({ ...localTask, categoryId: e.target.value })
                             }
                             className="w-full border border-gray-300 rounded-lg p-2"
                             required
                         >
-                            <option value="">Select a Category</option>
+                            <option value="">Choose a Category</option>
                             {categories.map((category) => (
                                 <option key={category.id} value={category.id}>
                                     {category.name}
@@ -101,5 +102,19 @@ const TaskEditModal = ({ task, categories, isOpen, onClose, onSave }) => {
         </div>
     );
 };
+
+TaskEditModal.propTypes = {
+    task: PropTypes.object.isRequired,
+    categories: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+            name: PropTypes.string.isRequired,
+        })
+    ),
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+};
+
 
 export default TaskEditModal;

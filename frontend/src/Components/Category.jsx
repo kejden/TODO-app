@@ -6,7 +6,11 @@ import Task from "./Task.jsx";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import TaskEditModal from "./TaskEditModal.jsx";
 
-const Category = ({ category, categories, handleEditCategory, handleDeleteCategory }) => {
+const Category = ({
+                      category,
+                      categories,
+                      handleEditCategory,
+                      handleDeleteCategory }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [editDialogOpen, setEditDialogOpen] = useState(false);

@@ -20,6 +20,7 @@ const Home = () => {
     const [taskToEdit, setTaskToEdit] = useState(null);
     const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
 
+
     const handleAdd = () => {
         setIsModalOpen(true);
     };
@@ -174,7 +175,7 @@ const Home = () => {
 
     const handleEditTask = (task) => {
         setTaskToEdit(task);
-        setEditDialogOpen(true);
+        setEditTaskModalOpen(true);
     };
 
     const handleEditTaskSave = async (updatedTask) => {
@@ -194,13 +195,13 @@ const Home = () => {
             if (response.status === 200) {
                 toast.success("Task updated successfully");
 
-                setTasks((prevTasks) =>
+                setTasksWithoutCategory((prevTasks) =>
                     prevTasks
                         .filter((task) => task.id !== updatedTask.id)
                         .concat(updatedTask)
                 );
                 window.location.reload();
-                setEditDialogOpen(false);
+                setEditTaskModalOpen(false);
                 setTaskToEdit(null);
             }
         } catch (error) {
@@ -283,6 +284,7 @@ const Home = () => {
             <TaskEditModal
                 task={taskToEdit}
                 isOpen={editTaskModalOpen}
+                categories={categories}
                 onClose={() => setEditTaskModalOpen(false)}
                 onSave={handleEditTaskSave}
             />
