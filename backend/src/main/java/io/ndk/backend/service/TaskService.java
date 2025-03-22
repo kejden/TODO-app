@@ -8,9 +8,9 @@ import java.util.List;
 public interface TaskService {
     List<TaskDto> getTaskByUser(String email);
     List<TaskDto> getTasksWithoutCategory(String email);
-    List<TaskDto> getTaskByCategoryId(Long categoryId);
+    List<TaskDto> getTaskByCategoryId(Long categoryId, String email);
     TaskDto createTask(TaskRequest request, String email);
-    TaskDto getTaskById(Long id);
-    TaskDto updateById(Long id, TaskRequest task);
-    void deleteById(Long id);
+    TaskDto getTaskById(Long id, String email);
+    TaskDto updateById(Long id, TaskRequest task, String email);
+    void deleteById(Long id, String email);
 }

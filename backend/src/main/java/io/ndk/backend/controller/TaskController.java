@@ -29,8 +29,8 @@ public class TaskController {
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<TaskDto>> getTasksByCategory(@PathVariable Long categoryId) {
-        return new ResponseEntity<>(taskService.getTaskByCategoryId(categoryId), HttpStatus.OK);
+    public ResponseEntity<List<TaskDto>> getTasksByCategory(@PathVariable Long categoryId, Principal principal) {
+        return new ResponseEntity<>(taskService.getTaskByCategoryId(categoryId, principal.getName()), HttpStatus.OK);
     }
 
 
@@ -40,18 +40,18 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDto> getTaskById(@PathVariable Long id) {
-        return new ResponseEntity<>(taskService.getTaskById(id), HttpStatus.OK);
+    public ResponseEntity<TaskDto> getTaskById(@PathVariable Long id, Principal principal) {
+        return new ResponseEntity<>(taskService.getTaskById(id, principal.getName()), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @RequestBody TaskRequest task) {
-        return new ResponseEntity<>(taskService.updateById(id, task), HttpStatus.OK);
+    public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @RequestBody TaskRequest task, Principal principal) {
+        return new ResponseEntity<>(taskService.updateById(id, task, principal.getName()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        taskService.deleteById(id);
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id, Principal principal) {
+        taskService.deleteById(id, principal.getName());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

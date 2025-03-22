@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.security.Principal;
 
 @Service
 @AllArgsConstructor
@@ -26,45 +27,84 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> getAllCategoriesOfUser(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+        User user = getCurrentUser(email);
 
-        return categoryRepository.findByUser(user).stream().map(categoryMapper::mapTo).collect(Collectors.toList());
+        return categoryRepository.findByUser(user)
+                .stream()
+                .map(categoryMapper::mapTo)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public CategoryDto getCategoryById(Long id) {
-        return categoryRepository.findById(id)
-                .map(categoryMapper::mapTo)
-                .orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+    public CategoryDto getCategoryById(Long id, Principal principal) {
+        User currentUser = getCurrentUser(principal.getName());
+
+        Category categoryEntity = getCategoryById(id);
+
+        if (!categoryEntity.getUser().getEmail().equals(currentUser.getEmail())) {
+            throw new CustomException(BusinessErrorCodes.ACCESS_DENIED);
+        }
+
+        return categoryMapper.mapTo(categoryEntity);
     }
 
     @Override
     public CategoryDto addCategory(CategoryRequest categoryRequest, String userEmail) {
-        User userEntity = userRepository.findByEmail(userEmail).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
-        if (categoryRepository.existsByNameAndUser(categoryRequest.getName(), userEntity)) {
+        User user = getCurrentUser(userEmail);
+
+        if (categoryRepository.existsByNameAndUser(categoryRequest.getName(), user)) {
             throw new CustomException(BusinessErrorCodes.CATEGORY_ALREADY_EXISTS);
         }
-        Category categoryEntity = new Category().builder()
+
+        Category categoryEntity = Category.builder()
                 .name(categoryRequest.getName())
-                .user(userEntity)
+                .user(user)
                 .build();
+
         Category savedCategory = categoryRepository.save(categoryEntity);
         return categoryMapper.mapTo(savedCategory);
     }
 
     @Override
-    public CategoryDto updateCategory(Long id, CategoryRequest categoryRequest) {
-        Category categoryEntity = categoryRepository.findById(id).orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+    public CategoryDto updateCategory(Long id, CategoryRequest categoryRequest, Principal principal) {
+        User currentUser = getCurrentUser(principal.getName());
+
+        Category categoryEntity = getCategoryById(id);
+
+        if (!categoryEntity.getUser().getEmail().equals(currentUser.getEmail())) {
+            throw new CustomException(BusinessErrorCodes.ACCESS_DENIED);
+        }
+
         categoryEntity.setName(categoryRequest.getName());
         Category savedCategory = categoryRepository.save(categoryEntity);
         return categoryMapper.mapTo(savedCategory);
     }
 
     @Override
-    public void deleteCategory(Long id) {
-        if(!categoryRepository.existsById(id)){
+    public void deleteCategory(Long id, Principal principal) {
+        User currentUser = getCurrentUser(principal.getName());
+
+        if (!categoryRepository.existsById(id)) {
             throw new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY);
         }
+
+        Category categoryEntity = getCategoryById(id);
+
+        if (!categoryEntity.getUser().getEmail().equals(currentUser.getEmail())) {
+            throw new CustomException(BusinessErrorCodes.ACCESS_DENIED);
+        }
+
         categoryRepository.deleteById(id);
     }
+
+    private User getCurrentUser(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_EMAIL));
+    }
+
+    private Category getCategoryById(Long id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new CustomException(BusinessErrorCodes.NO_SUCH_CATEGORY));
+    }
+
 }

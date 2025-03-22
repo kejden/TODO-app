@@ -19,7 +19,7 @@ public enum BusinessErrorCodes {
     CATEGORY_ALREADY_EXISTS(310, "This category already exists", HttpStatus.BAD_REQUEST),
     NO_SUCH_CATEGORY(311, "This category does not exist", HttpStatus.BAD_REQUEST),
     NO_SUCH_TASK(312, "This task does not exist", HttpStatus.BAD_REQUEST),
-    ;
+    ACCESS_DENIED(313, "You dont have permission to perform this action", HttpStatus.FORBIDDEN),;
 
     @Getter
     private final int code;
