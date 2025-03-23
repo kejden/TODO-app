@@ -188,6 +188,24 @@ public class CategoryServiceTests {
     }
 
     @Test
+    void testUpdateCategory_OtherUserAccessDenied() {
+        Principal principal = () -> "notOwner@mock.com";
+        User mockUser = User.builder().email("notOwner@mock.com").build();
+        when(userRepository.findByEmail("notOwner@mock.com")).thenReturn(Optional.of(mockUser));
+
+        // Category belongs to someone else
+        Category category = Category.builder()
+                .id(20L)
+                .user(User.builder().email("someOwner@mock.com").build())
+                .build();
+        when(categoryRepository.findById(20L)).thenReturn(Optional.of(category));
+
+        assertThrows(CustomException.class, () -> categoryService.updateCategory(
+                20L, new CategoryRequest("Attempted Update"), principal
+        ));
+    }
+
+    @Test
     void testDeleteCategory_Success() {
         Principal principal = () -> "test@mock.com";
         User mockUser = User.builder().email("test@mock.com").build();
@@ -228,5 +246,21 @@ public class CategoryServiceTests {
         when(categoryRepository.findById(88L)).thenReturn(Optional.of(category));
 
         assertThrows(CustomException.class, () -> categoryService.deleteCategory(88L, principal));
+    }
+
+    @Test
+    void testDeleteCategory_OtherUserAccessDenied() {
+        Principal principal = () -> "notOwner@mock.com";
+        when(userRepository.findByEmail("notOwner@mock.com"))
+                .thenReturn(Optional.of(User.builder().email("notOwner@mock.com").build()));
+
+        Category category = Category.builder()
+                .id(21L)
+                .user(User.builder().email("another@mock.com").build())
+                .build();
+        when(categoryRepository.existsById(21L)).thenReturn(true);
+        when(categoryRepository.findById(21L)).thenReturn(Optional.of(category));
+
+        assertThrows(CustomException.class, () -> categoryService.deleteCategory(21L, principal));
     }
 }

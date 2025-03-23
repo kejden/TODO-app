@@ -384,6 +384,23 @@ public class TaskServiceTests {
     }
 
     @Test
+    void testUpdateById_OtherUserAccessDenied() {
+        // Suppose the task belongs to someone else
+        User mockUser = User.builder().email("notOwner@mock.com").build();
+        when(userRepository.findByEmail("notOwner@mock.com")).thenReturn(Optional.of(mockUser));
+
+        Task task = Task.builder()
+                .id(555L)
+                .user(User.builder().email("owner@mock.com").build())
+                .build();
+        when(taskRepository.findById(555L)).thenReturn(Optional.of(task));
+
+        TaskRequest updateRequest = TaskRequest.builder().title("Blocked").build();
+
+        assertThrows(CustomException.class, () -> taskService.updateById(555L, updateRequest, "notOwner@mock.com"));
+    }
+
+    @Test
     void testDeleteById_Success() {
         User mockUser = User.builder()
                 .email("test@mock.com")
@@ -428,5 +445,20 @@ public class TaskServiceTests {
 
         when(taskRepository.findById(777L)).thenReturn(Optional.empty());
         assertThrows(CustomException.class, () -> taskService.deleteById(777L, "test@mock.com"));
+    }
+
+    @Test
+    void testDeleteById_OtherUserAccessDenied() {
+        User mockUser = User.builder().email("notOwner@mock.com").build();
+        when(userRepository.findByEmail("notOwner@mock.com")).thenReturn(Optional.of(mockUser));
+
+        // Task belongs to another user
+        Task task = Task.builder()
+                .id(777L)
+                .user(User.builder().email("someoneElse@mock.com").build())
+                .build();
+        when(taskRepository.findById(777L)).thenReturn(Optional.of(task));
+
+        assertThrows(CustomException.class, () -> taskService.deleteById(777L, "notOwner@mock.com"));
     }
 }
